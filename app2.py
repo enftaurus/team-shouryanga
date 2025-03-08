@@ -18,6 +18,7 @@ def get_fitness_advice(user_input):
 
 # Streamlit UI Setup
 st.set_page_config(page_title="FitSync AI", page_icon="🏋️", layout="wide")
+st.set_page_config(page_title="FitSync AI", page_icon="🏋", layout="wide")
 
 # User Details Page
 if "page" not in st.session_state:
@@ -34,6 +35,7 @@ if st.session_state.page == "details":
     height = st.number_input("Height (cm)", min_value=50, max_value=250, step=1)
     weight = st.number_input("Weight (kg)", min_value=20, max_value=300, step=1)
     fitness_goal = st.text_area("What is your fitness goal?")
+    fitness_stage = st.selectbox("Fitness Stage", ["", "Beginner", "Intermediate", "Advanced"])
     
     if st.button("Get Started"):
         st.session_state.page = "main"
@@ -65,6 +67,12 @@ elif st.session_state.page == "main":
             .header p {
                 font-size: 18px;
                 margin: 10px 0 0;
+            }
+            .video-container {
+                margin-top: 20px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
             }
         </style>
         """,
@@ -120,13 +128,20 @@ elif st.session_state.page == "main":
     training_type = st.sidebar.selectbox("Select Training Type", ["", "Bodybuilding", "Powerlifting", "Calisthenics", "CrossFit", "Strongman", "Compound Lifting (Deadlifts, Squats, Bench Press)"])
     intensity = st.sidebar.selectbox("Workout Intensity", ["", "Light", "Moderate", "Intense", "Extreme"])
 
+    # Fitness Stage Logic
+    fitness_stage = st.session_state.get("fitness_stage", "")
+    if fitness_stage == "Beginner":
+        st.sidebar.warning("💡 As a beginner, we recommend hitting the gym and working with a professional trainer for at least 15 days to understand your body's adaptability and conditions.")
+
     # Generate Workout Plan
     if st.button("💡 Generate Workout Plan", key="generate", help="Click to generate a workout plan"):
         if not user_query.strip():
             st.warning("⚠️ Please enter a valid fitness-related query.")
+            st.warning("⚠ Please enter a valid fitness-related query.")
         else:
             with st.spinner("⏳ Generating workout plan..."):
                 final_query = f"{user_query}. Last workout intensity: {intensity}."
+                final_query = f"{user_query}. Fitness stage: {fitness_stage}. Last workout intensity: {intensity}."
                 if muscle_group:
                     final_query += f" Focus on {muscle_group}."
                 if sub_muscle:
@@ -135,6 +150,24 @@ elif st.session_state.page == "main":
                     final_query += f" Training type: {training_type}."
                 final_query += " Provide the number of reps and sets for each exercise. Include rest periods of 1-1.5 minutes between sets. Also, remind the user to re-rack weights after completing their workout."
                 advice = get_fitness_advice(final_query)
+
+                # Add workout video links and sleep cycle recommendations
+                workout_videos = {
+                    "Chest": "https://www.youtube.com/watch?v=bps0uIgf6dg",
+                    "Back": "https://www.youtube.com/watch?v=w1eQ67dLsgA",
+                    "Legs": "https://www.youtube.com/watch?v=MzeiSTQtuyw",
+                    "Arms": "https://www.youtube.com/watch?v=o9zCgPtsups",
+                    "Shoulders": "https://www.youtube.com/watch?v=MzeiSTQtuyw",
+                    "Core": "https://www.youtube.com/watch?v=RarcD0Q50nU",
+                }
+
+                sleep_cycle_recommendation = {
+                    "Beginner": "9-10 hours of sleep per night. Focus on consistency and quality sleep concentrate on fueling carbs.",
+                    "Intermediate": "7-9 hours of sleep per night. Consider tracking sleep stages using a wearable device concentrate on protein intake also mind muscle connection.",
+                    "Advanced": "6-8 hours of sleep per night. Optimize sleep hygiene and recovery strategies concentrate on diet because body is made in kitchen .",
+                }
+
+                # Display Workout Plan
                 st.markdown(
                     f"""
                     <div class='workout-plan'>
@@ -144,6 +177,16 @@ elif st.session_state.page == "main":
                     """,
                     unsafe_allow_html=True,
                 )
+
+                # Display Workout Videos
+                if muscle_group in workout_videos:
+                    st.markdown("### 🎥 Recommended Workout Videos")
+                    st.video(workout_videos[muscle_group])
+
+                # Display Sleep Cycle Recommendation
+                if fitness_stage in sleep_cycle_recommendation:
+                    st.markdown("### 😴 Recommended Sleep Cycle")
+                    st.info(sleep_cycle_recommendation[fitness_stage])
 
     # Footer
     st.markdown(
