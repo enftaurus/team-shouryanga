@@ -29,6 +29,7 @@ if st.session_state.page == "details":
     
     name = st.text_input("Full Name")
     age = st.number_input("Age", min_value=10, max_value=100, step=1)
+    age = st.number_input("Age", min_value=16, max_value=100, step=1)
     gender = st.selectbox("Gender", ["", "Male", "Female", "Other"])
     height = st.number_input("Height (cm)", min_value=50, max_value=250, step=1)
     weight = st.number_input("Weight (kg)", min_value=20, max_value=300, step=1)
