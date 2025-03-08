@@ -17,7 +17,6 @@ def get_fitness_advice(user_input):
         return f"An unexpected error occurred: {str(e)}"
 
 # Streamlit UI Setup
-st.set_page_config(page_title="FitSync AI", page_icon="🏋️", layout="wide")
 st.set_page_config(page_title="FitSync AI", page_icon="🏋", layout="wide")
 
 # User Details Page
@@ -135,11 +134,9 @@ elif st.session_state.page == "main":
     # Generate Workout Plan
     if st.button("💡 Generate Workout Plan", key="generate", help="Click to generate a workout plan"):
         if not user_query.strip():
-            st.warning("⚠️ Please enter a valid fitness-related query.")
             st.warning("⚠ Please enter a valid fitness-related query.")
         else:
             with st.spinner("⏳ Generating workout plan..."):
-                final_query = f"{user_query}. Last workout intensity: {intensity}."
                 final_query = f"{user_query}. Fitness stage: {fitness_stage}. Last workout intensity: {intensity}."
                 if muscle_group:
                     final_query += f" Focus on {muscle_group}."
@@ -192,4 +189,3 @@ elif st.session_state.page == "main":
         "<div class='footer'>Developed by Team Shouryanga | Powered by Llama3</div>",
         unsafe_allow_html=True,
     )
-
